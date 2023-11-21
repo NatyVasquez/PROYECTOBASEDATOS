@@ -10,6 +10,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import com.toedter.calendar.JDateChooser;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Calendar;
+import java.util.Date;
+import javax.swing.JButton;
 
 /**
  *
@@ -31,13 +37,15 @@ public class Formulario extends JFrame {
     private RoundComboBox[] boxes = new RoundComboBox[3];
 
     private JPanel panel = new JPanel(null);
+    private JDateChooser dateChooser;
+    private JButton btnMostrarCalendario;
     
     private Menu m;
 
     public Formulario(Menu m) {
         super("Nuevo jugador");
         this.m = m;
-        setSize(1000, 600);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -48,7 +56,10 @@ public class Formulario extends JFrame {
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         titulo.setVerticalAlignment(JLabel.CENTER);
         titulo.setHorizontalAlignment(JLabel.CENTER);
-        
+            dateChooser = new JDateChooser(new Date());
+    dateChooser.setBounds(150, 400, 100, 25); // Ajusta la posición según tus necesidades
+    dateChooser.setVisible(false); // Inicialmente oculto
+    panel.add(dateChooser);
         warning.setBounds(450, 400, 500, 50);
         warning.setFont(new Font("Arial", Font.PLAIN, 18));
         warning.setForeground(Color.red);
@@ -99,7 +110,7 @@ public class Formulario extends JFrame {
         tagCampos[2].setFont(new Font("Arial", Font.PLAIN,18));
         tagCampos[2].setLocation(25, 300);
         
-        campos[3].setLocation(200, 400);
+       /* campos[3].setLocation(200, 400);
         tagCampos[3].setText("Dia");
         tagCampos[3].setHorizontalAlignment(JLabel.CENTER);
         tagCampos[3].setFont(new Font("Arial", Font.PLAIN,18));
@@ -117,18 +128,27 @@ public class Formulario extends JFrame {
         tagCampos[5].setHorizontalAlignment(JLabel.CENTER);
         tagCampos[5].setFont(new Font("Arial", Font.PLAIN,18));
         tagCampos[5].setLocation(405, 350);
-        
+        */
         tagCampos[6] = new JLabel();
         tagCampos[6].setSize(200, 50);
         panel.add(tagCampos[6]);
-        tagCampos[6].setText("Fecha de nacimieno");
+        tagCampos[6].setText("Fecha de nacimiento");
         tagCampos[6].setFont(new Font("Arial", Font.PLAIN,18));
-        tagCampos[6].setLocation(25, 400);
+        tagCampos[6].setLocation(25, 350);
         
         
     }
 
     public void iniciarBotones() {
+        btnMostrarCalendario = new JButton("Mostrar Calendario");
+    btnMostrarCalendario.setBounds(220, 370, 150, 25); // Ajusta la posición según tus necesidades
+    btnMostrarCalendario.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            dateChooser.setVisible(true);
+        }
+    });
+    panel.add(btnMostrarCalendario);
         botones[0] = new BasicButton(130, 50, "Guardar") {
             @Override
             public void clickEvent() {
@@ -218,6 +238,7 @@ public class Formulario extends JFrame {
     
     public void guardar(){
         FileWriter w = null;
+        Date fechaSeleccionada = dateChooser.getDate();
         boolean error = false;
         try {
             w = new FileWriter("datosJugadores.csv", true);
@@ -229,14 +250,7 @@ public class Formulario extends JFrame {
         
         Composicion fechas = new Composicion();
         
-        try {
-            fechas = new Composicion(Integer.parseInt(campos[3].getText()),
-            Integer.parseInt(campos[4].getText()),Integer.parseInt(campos[5].getText()));
-        } catch (NumberFormatException e) {
-            error = true;
-            warning.setText("Formato invalido fecha de nacimiento (dd/mm/aaaa)");
-            warning.setVisible(true);
-        }
+
         
         if (!error && !exits(campos[2].getText())) {
             
